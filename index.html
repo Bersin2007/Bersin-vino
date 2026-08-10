@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predictive maintenance for RHEL fleets — sentryctl</title>
+<meta name="description" content="sentryctl watches sysstat metrics and journalctl logs across your RHEL fleet and flags failures 15-90 minutes before they happen.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+
+</head>
+<body class="">
+<nav class="site-nav">
+  <div class="wrap row">
+    <a class="brand" href="index.html"><span class="dot"></span>sentryctl<small>v1.0</small></a>
+    <div class="navlinks">
+      <div class="navgroup" tabindex="0"><span>Product</span><div class="dropdown"><a href="product/overview.html"><span>Overview</span><small>What sentryctl does</small></a><a href="product/how-it-works.html"><span>How it works</span><small>Ingest → score → alert</small></a><a href="product/architecture.html"><span>Architecture</span><small>Agents, pipeline, storage</small></a><a href="product/live-demo.html"><span>Live demo</span><small>Simulated fleet, live</small></a></div></div><div class="navgroup" tabindex="0"><span>Features</span><div class="dropdown"><a href="features/anomaly-detection.html"><span>Anomaly detection</span><small>Unsupervised from day one</small></a><a href="features/predictive-alerts.html"><span>Predictive alerts</span><small>15–90 min early warning</small></a><a href="features/fleet-dashboard.html"><span>Fleet dashboard</span><small>Every node, one screen</small></a><a href="features/log-intelligence.html"><span>Log intelligence</span><small>journalctl, structured</small></a><a href="features/insights-integration.html"><span>Insights integration</span><small>Red Hat Insights context</small></a></div></div><div class="navgroup" tabindex="0"><span>Solutions</span><div class="dropdown"><a href="solutions/enterprise-it.html"><span>Enterprise IT</span><small>Large fleets, tight SLAs</small></a><a href="solutions/managed-service-providers.html"><span>MSPs</span><small>Multi-tenant monitoring</small></a><a href="solutions/government.html"><span>Government</span><small>Air-gapped & compliant</small></a></div></div><div class="navgroup" tabindex="0"><span>Company</span><div class="dropdown"><a href="company/about.html"><span>About</span><small>Why we built sentryctl</small></a><a href="company/careers.html"><span>Careers</span><small>Open roles</small></a><a href="company/contact.html"><span>Contact</span><small>Talk to the team</small></a><a href="customers/case-studies.html"><span>Case studies</span><small>Real fleets, real numbers</small></a></div></div>
+      <a href="docs/getting-started.html" class="">Docs</a><a href="pricing.html" class="">Pricing</a><a href="blog/index.html" class="">Blog</a>
+      <a class="nav-cta" href="company/contact.html">Get a demo</a>
+    </div>
+    <button class="navburger" id="navburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-panel" id="mobilePanel">
+    <div class="mgroup"><b>Product</b><a href="product/overview.html">Overview</a><a href="product/how-it-works.html">How it works</a><a href="product/architecture.html">Architecture</a><a href="product/live-demo.html">Live demo</a></div><div class="mgroup"><b>Features</b><a href="features/anomaly-detection.html">Anomaly detection</a><a href="features/predictive-alerts.html">Predictive alerts</a><a href="features/fleet-dashboard.html">Fleet dashboard</a><a href="features/log-intelligence.html">Log intelligence</a><a href="features/insights-integration.html">Insights integration</a></div><div class="mgroup"><b>Solutions</b><a href="solutions/enterprise-it.html">Enterprise IT</a><a href="solutions/managed-service-providers.html">MSPs</a><a href="solutions/government.html">Government</a></div><div class="mgroup"><b>Company</b><a href="company/about.html">About</a><a href="company/careers.html">Careers</a><a href="company/contact.html">Contact</a><a href="customers/case-studies.html">Case studies</a></div>
+    <div class="mgroup"><b>More</b><a href="docs/getting-started.html">Docs</a><a href="pricing.html">Pricing</a><a href="blog/index.html">Blog</a></div>
+    <a class="nav-cta" href="company/contact.html" style="display:inline-block;margin-top:6px;">Get a demo</a>
+  </div>
+</nav>
+
+
+<header class="hero wrap">
+  <div class="eyebrow">predictive maintenance for RHEL server fleets</div>
+  <h1>Catch the failure <span>before the pager does.</span></h1>
+  <p class="lede">sentryctl watches sysstat metrics and journalctl logs across your RHEL fleet, learns what "about to fail" looks like, and flags it 15–90 minutes out — not after the outage.</p>
+  <div class="hero-actions">
+    <a class="btn" href="company/contact.html">Get a demo</a>
+    <a class="btn ghost" href="product/live-demo.html">See it live →</a>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <span class="tdot"></span><span class="tdot" style="background:#4a4f58"></span><span class="tdot" style="background:#4a4f58"></span>
+      <span class="tlabel">ops@bastion:~</span>
+    </div>
+    <div class="term-body">
+      <div class="term-line"><span class="term-prompt">$</span> sentryctl status --fleet</div>
+      <div class="term-out" id="statusOut">scoring latest telemetry window...<span class="cursor"></span></div>
+      <div class="led-row" id="ledRow">
+        <div class="led ok"><i></i><div><b id="ledOk">–</b><small>healthy</small></div></div>
+        <div class="led warn"><i></i><div><b id="ledWarn">–</b><small>watch</small></div></div>
+        <div class="led crit"><i></i><div><b id="ledCrit">–</b><small>critical</small></div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="logos" class="tight">
+    <div class="sec-head" style="border-bottom:none;">
+      <div class="sub">TRUSTED BY OPS TEAMS RUNNING RHEL AT SCALE — SIMULATED REFERENCE DEPLOYMENTS</div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="lbl">Nodes monitored (design target)</div><div class="val">10k<small>+</small></div><div class="note">per control-plane instance</div></div>
+      <div class="stat-card"><div class="lbl">Median lead time</div><div class="val">42<small>min</small></div><div class="note">before failure, on simulated fleet</div></div>
+      <div class="stat-card"><div class="lbl">Alert precision</div><div class="val">94<small>%</small></div><div class="note">of alerts are real pre-failure windows</div></div>
+      <div class="stat-card"><div class="lbl">Setup time</div><div class="val">&lt;15<small>min</small></div><div class="note">agent install to first score</div></div>
+    </div>
+  </section>
+
+  <section id="fleet">
+    <div class="sec-head">
+      <h2>fleet — 6 nodes</h2>
+      <div class="sub">refreshed every 3s · rolling 15-min window · simulated</div>
+    </div>
+    <div class="fleet-grid" id="fleetGrid"></div>
+  </section>
+
+  <section id="alerts">
+    <div class="sec-head">
+      <h2>alerts &amp; live journal</h2>
+      <div class="sub">model-flagged pre-failure windows</div>
+    </div>
+    <div class="split">
+      <div class="alerts-panel">
+        <div class="panel-head"><span>active alerts</span><span class="count" id="alertCount">0</span></div>
+        <ul class="alerts-list" id="alertsList"></ul>
+      </div>
+      <div class="log-panel">
+        <div class="panel-head"><span>journalctl -f (fleet-wide)</span><span style="font-family:var(--mono);font-size:10.5px;color:var(--text-faint)">live</span></div>
+        <div class="log-body" id="logBody"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pipeline">
+    <div class="sec-head">
+      <h2>how it works</h2>
+      <div class="sub">sosreport + journalctl + sysstat → alert</div>
+    </div>
+    <div class="pipeline">
+      <div class="pstep"><div class="pnum">01</div><h3>ingest</h3><p>Pull sysstat/node_exporter metrics and journalctl logs from every host, once a minute.</p></div>
+      <div class="pstep"><div class="pnum">02</div><h3>engineer</h3><p>Turn raw readings into 15-min rolling mean, std-dev and trend slope — failures show up as trends, not spikes.</p></div>
+      <div class="pstep"><div class="pnum">03</div><h3>train</h3><p>IsolationForest runs with zero labels from day one. GradientBoosting sharpens as real incidents accumulate.</p></div>
+      <div class="pstep"><div class="pnum">04</div><h3>score &amp; alert</h3><p>Every window gets a failure probability and a plain-English reason: "disk at 98%, filling up."</p></div>
+      <div class="pstep"><div class="pnum">05</div><h3>enrich <span style="color:var(--text-faint); font-weight:500;">(bonus)</span></h3><p>Cross-reference alerts against Red Hat Insights rule hits for vendor-confirmed context.</p></div>
+    </div>
+    <div style="margin-top:20px;"><a class="btn ghost sm" href="product/how-it-works.html">Read the full pipeline breakdown →</a></div>
+  </section>
+
+  <section id="features-preview">
+    <div class="sec-head">
+      <h2>built for the fleet, not the demo</h2>
+      <div class="sub">five things sentryctl does well</div>
+    </div>
+    <div class="card-grid">
+      <div class="info-card"><div class="icon">01</div><h3>Anomaly detection</h3><p>Unsupervised scoring from the first minute, no training data required.</p><a class="more" href="features/anomaly-detection.html">Learn more →</a></div>
+      <div class="info-card"><div class="icon">02</div><h3>Predictive alerts</h3><p>15–90 minutes of lead time with a plain-English reason attached.</p><a class="more" href="features/predictive-alerts.html">Learn more →</a></div>
+      <div class="info-card"><div class="icon">03</div><h3>Fleet dashboard</h3><p>Every node's health, trend, and alert history on one screen.</p><a class="more" href="features/fleet-dashboard.html">Learn more →</a></div>
+      <div class="info-card"><div class="icon">04</div><h3>Log intelligence</h3><p>journalctl parsed and leveled in real time, correlated to metrics.</p><a class="more" href="features/log-intelligence.html">Learn more →</a></div>
+      <div class="info-card"><div class="icon">05</div><h3>Insights integration</h3><p>Cross-reference alerts against Red Hat Insights for vendor context.</p><a class="more" href="features/insights-integration.html">Learn more →</a></div>
+    </div>
+  </section>
+
+  <section id="metrics">
+    <div class="sec-head">
+      <h2>model performance</h2>
+      <div class="sub">measured on a 6-node simulated fleet, 3 injected failure modes</div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card accent"><div class="lbl">Unsupervised AUC</div><div class="val">0.94</div><div class="note">IsolationForest — zero labels required</div></div>
+      <div class="stat-card accent"><div class="lbl">Supervised AUC</div><div class="val">0.98</div><div class="note">GradientBoosting failure probability</div></div>
+      <div class="stat-card"><div class="lbl">Precision</div><div class="val">94<small>%</small></div><div class="note">of alerts are real pre-failure windows</div></div>
+      <div class="stat-card"><div class="lbl">Recall</div><div class="val">87<small>%</small></div><div class="note">of true failures caught in advance</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="cta">
+      <h2>Run it on your own fleet</h2>
+      <p>The full pipeline — simulator, feature engineering, both models, live scoring, and the Insights API stub — is one Python file.</p>
+      <a class="btn" href="docs/getting-started.html">$ get started →</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="brand" style="font-size:14px;margin-bottom:12px;"><span class="dot"></span>sentryctl</div>
+        <p style="font-size:12.5px;max-width:220px;">Predictive maintenance for RHEL server fleets. Catch the failure before the pager does.</p>
+      </div>
+      <div><b>Product</b><a href="product/overview.html">Overview</a><a href="product/how-it-works.html">How it works</a><a href="product/architecture.html">Architecture</a><a href="product/live-demo.html">Live demo</a><a href="pricing.html">Pricing</a></div><div><b>Features</b><a href="features/anomaly-detection.html">Anomaly detection</a><a href="features/predictive-alerts.html">Predictive alerts</a><a href="features/fleet-dashboard.html">Fleet dashboard</a><a href="features/log-intelligence.html">Log intelligence</a><a href="features/insights-integration.html">Insights integration</a></div><div><b>Solutions</b><a href="solutions/enterprise-it.html">Enterprise IT</a><a href="solutions/managed-service-providers.html">MSPs</a><a href="solutions/government.html">Government</a><a href="customers/case-studies.html">Case studies</a></div><div><b>Resources</b><a href="docs/getting-started.html">Getting started</a><a href="docs/cli-reference.html">CLI reference</a><a href="docs/api-reference.html">API reference</a><a href="docs/faq.html">FAQ</a><a href="blog/index.html">Blog</a><a href="changelog.html">Changelog</a><a href="security.html">Security</a></div><div><b>Company</b><a href="company/about.html">About</a><a href="company/careers.html">Careers</a><a href="company/contact.html">Contact</a></div>
+    </div>
+    <div class="footer-bottom">
+      <div class="fnote">Hackathon concept product — fleet data shown in live demos is simulated client-side for illustration. Not affiliated with or endorsed by Red Hat, Inc.</div>
+      <div class="fnote">© 2026 sentryctl. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+<script src="assets/js/nav.js"></script>
+<script src="assets/js/dashboard.js"></script>
+</body>
+</html>
